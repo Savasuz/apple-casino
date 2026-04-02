@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Full Casino</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#000;
+  color:white;
+  text-align:center;
+}
+
+h2{
+  color:#ffd700;
+  text-shadow:0 0 15px #ffd700;
+}
+
+.top{
+  display:flex;
+  justify-content:space-around;
+  margin:10px;
+}
+
+.box{
+  background:#111;
+  padding:10px;
+  border-radius:10px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+  padding:20px;
+}
+
+.cell{
+  height:70px;
+  border:none;
+  border-radius:20px;
+  font-size:28px;
+  background:#111;
+  color:white;
+  box-shadow:0 0 10px #444;
+}
+
+.win{background:#00ff99;}
+.lose{background:#ff0033;}
+
+button{
+  margin:5px;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+}
+
+.bet{
+  background:#ffd700;
+  color:black;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🎰 FULL CASINO</h2>
+
+<div class="top">
+  <div class="box">💰 <span id="bal">1000</span></div>
+  <div class="box">🎯 Bet: <span id="bet">100</span></div>
+</div>
+
+<div>
+  <button class="bet" onclick="setBet(50)">50</button>
+  <button class="bet" onclick="setBet(100)">100</button>
+  <button class="bet" onclick="setBet(200)">200</button>
+</div>
+
+<div id="status">Tanla</div>
+
+<div class="grid" id="game"></div>
+
+<script>
+let bad, balance=1000, bet=100, lock=false;
+
+function setBet(x){
+  bet=x;
+  document.getElementById("bet").innerText=bet;
+}
+
+function sound(f){
+  let c=new AudioContext();
+  let o=c.createOscillator();
+  o.frequency.value=f;
+  o.connect(c.destination);
+  o.start();
+  setTimeout(()=>o.stop(),150);
+}
+
+function vib(){ if(navigator.vibrate) navigator.vibrate(100); }
+
+function start(){
+  bad=Math.floor(Math.random()*5);
+  lock=false;
+  let g=document.getElementById("game");
+  g.innerHTML="";
+
+  for(let i=0;i<5;i++){
+    let b=document.createElement("button");
+    b.className="cell";
+    b.innerText="❓";
+
+    b.onclick=()=>{
+      if(lock)return;
+      lock=true;
+
+      document.querySelectorAll(".cell").forEach((x,i2)=>{
+        if(i2==bad){
+          x.innerText="💣";
+          x.classList.add("lose");
+        }else{
+          x.innerText="🍎";
+          x.classList.add("win");
+        }
+      });
+
+      if(i==bad){
+        balance-=bet;
+        document.getElementById("status").innerText="❌ Lose";
+        sound(200);
+      }else{
+        balance+=bet*2;
+        document.getElementById("status").innerText="✅ Win x2!";
+        sound(800);
+      }
+
+      vib();
+
+      if(balance<=0){
+        alert("Pul tugadi!");
+        balance=1000;
+      }
+
+      document.getElementById("bal").innerText=balance;
+
+      setTimeout(start,1500);
+    };
+
+    g.appendChild(b);
+  }
+}
+
+start();
+</script>
+
+</body>
+</html>

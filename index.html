@@ -66,6 +66,26 @@
     padding:86px 18px 24px;
   }
 
+  #menuScreen{
+    flex-direction:column;
+    justify-content:flex-start;
+    gap:44px;
+    overflow-y:auto;
+    padding-top:88px;
+    padding-bottom:60px;
+  }
+
+  .brand-logo{
+    width:138px;
+    height:138px;
+    flex:0 0 auto;
+    display:block;
+    object-fit:cover;
+    border-radius:26px;
+    border:1px solid rgba(152,255,55,.5);
+    box-shadow:0 0 24px rgba(99,255,39,.24),0 18px 44px rgba(0,0,0,.48);
+  }
+
   .panel{
     width:100%;
     max-width:380px;
@@ -432,6 +452,8 @@
     .num{font-size:112px}
     .telegram{top:12px;right:12px;width:44px;height:44px}
     .telegram-icon{width:42px;height:42px}
+    #menuScreen{gap:34px;padding-top:76px;padding-bottom:44px}
+    .brand-logo{width:118px;height:118px;border-radius:22px}
   }
 </style>
 </head>
@@ -445,6 +467,7 @@
 
 <!-- MENU -->
 <div id="menuScreen" class="screen">
+  <img class="brand-logo" src="assets/savas-logo.webp" alt="SAVAS logotipi">
   <div class="panel">
     <div class="title">SAVAS</div>
     <div class="grid">

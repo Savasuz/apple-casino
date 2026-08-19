@@ -328,6 +328,65 @@
     text-shadow:0 0 18px rgba(255,140,0,.32);
   }
 
+  .game-badge{
+    width:76px;
+    height:76px;
+    margin:8px auto 0;
+    display:grid;
+    place-items:center;
+    border-radius:22px;
+    font-size:42px;
+    background:rgba(10,0,0,.52);
+    border:1px solid rgba(255,209,102,.34);
+    box-shadow:inset 0 0 24px rgba(255,145,0,.09),0 12px 30px rgba(0,0,0,.3);
+  }
+
+  .apple-game{background:linear-gradient(160deg,rgba(66,7,8,.98),rgba(12,2,2,.96))}
+  .kamikaze-game{background:linear-gradient(160deg,rgba(65,24,4,.98),rgba(13,3,1,.96))}
+  .swamp-game{background:linear-gradient(160deg,rgba(7,48,27,.98),rgba(1,13,7,.96))}
+  .thimbles-game{background:linear-gradient(160deg,rgba(47,10,59,.98),rgba(10,2,14,.96))}
+
+  .result-track{
+    width:100%;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin:2px 0 4px;
+  }
+
+  .track-cell{
+    height:52px;
+    display:grid;
+    place-items:center;
+    border-radius:14px;
+    font-size:24px;
+    background:rgba(8,2,2,.66);
+    border:1px solid rgba(255,209,102,.2);
+    opacity:.62;
+    transition:.15s ease;
+  }
+
+  .track-cell.selected{
+    opacity:1;
+    transform:translateY(-5px) scale(1.05);
+    border-color:#ffd166;
+    background:linear-gradient(145deg,#ffb000,#ff4b12);
+    box-shadow:0 0 22px rgba(255,160,0,.5);
+  }
+
+  .swamp-game .track-cell.selected{
+    border-color:#68ff9b;
+    background:linear-gradient(145deg,#1bbd65,#08743c);
+    box-shadow:0 0 22px rgba(48,255,135,.38);
+  }
+
+  .scan-label{
+    color:#ffd166;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:2px;
+  }
+
   .num-zone{
     flex:1;
     width:100%;
@@ -444,70 +503,87 @@
 
 <!-- APPLE -->
 <div id="appleScreen" class="game-wrap">
-  <div class="game">
+  <div class="game apple-game">
     <div class="top-actions">
       <button class="mini-btn" onclick="goBack()">Orqaga</button>
-      <button class="mini-btn" onclick="resetNum('appleNum','appleTip')">Restart</button>
+      <button class="mini-btn" onclick="resetNum('appleNum','appleTip','appleTrack')">Restart</button>
     </div>
     <div class="game-title">APPLE</div>
+    <div class="game-badge">🍎</div>
     <div class="num-zone">
+      <div class="scan-label">ROW SCANNER</div>
       <div id="appleNum" class="num">0</div>
+      <div id="appleTrack" class="result-track">
+        <div class="track-cell">🍎</div><div class="track-cell">🍎</div><div class="track-cell">🍎</div><div class="track-cell">🍎</div><div class="track-cell">🍎</div>
+      </div>
       <div id="appleTip" class="tip">0 chi qatorni bosing!</div>
       <div class="hint">1 dan 5 gacha</div>
     </div>
     <div class="bottom">
-      <button class="btn" onclick="spinNum('appleNum','appleTip',5)">NEXT</button>
+      <button class="btn" onclick="spinNum('appleNum','appleTip',5,'appleTrack')">SCAN</button>
     </div>
   </div>
 </div>
 
 <!-- KAMIKAZE -->
 <div id="kamikazeScreen" class="game-wrap">
-  <div class="game">
+  <div class="game kamikaze-game">
     <div class="top-actions">
       <button class="mini-btn" onclick="goBack()">Orqaga</button>
-      <button class="mini-btn" onclick="resetNum('kamikazeNum','kamikazeTip')">Restart</button>
+      <button class="mini-btn" onclick="resetNum('kamikazeNum','kamikazeTip','kamikazeTrack')">Restart</button>
     </div>
     <div class="game-title">KAMIKAZE</div>
+    <div class="game-badge">✈️</div>
     <div class="num-zone">
+      <div class="scan-label">FLIGHT SCANNER</div>
       <div id="kamikazeNum" class="num">0</div>
+      <div id="kamikazeTrack" class="result-track">
+        <div class="track-cell">1</div><div class="track-cell">2</div><div class="track-cell">3</div><div class="track-cell">4</div><div class="track-cell">5</div>
+      </div>
       <div id="kamikazeTip" class="tip">0 chi qatorni bosing!</div>
       <div class="hint">1 dan 5 gacha</div>
     </div>
     <div class="bottom">
-      <button class="btn" onclick="spinNum('kamikazeNum','kamikazeTip',5)">NEXT</button>
+      <button class="btn" onclick="spinNum('kamikazeNum','kamikazeTip',5,'kamikazeTrack')">SCAN</button>
     </div>
   </div>
 </div>
 
 <!-- SWAMP -->
 <div id="swampScreen" class="game-wrap">
-  <div class="game">
+  <div class="game swamp-game">
     <div class="top-actions">
       <button class="mini-btn" onclick="goBack()">Orqaga</button>
-      <button class="mini-btn" onclick="resetNum('swampNum','swampTip')">Restart</button>
+      <button class="mini-btn" onclick="resetNum('swampNum','swampTip','swampTrack')">Restart</button>
     </div>
-    <div class="game-title">SWAMP</div>
+    <div class="game-title">SWAMP LAND</div>
+    <div class="game-badge">🐸</div>
     <div class="num-zone">
+      <div class="scan-label">LILY SCANNER</div>
       <div id="swampNum" class="num">0</div>
+      <div id="swampTrack" class="result-track">
+        <div class="track-cell">🍃</div><div class="track-cell">🍃</div><div class="track-cell">🍃</div><div class="track-cell">🍃</div><div class="track-cell">🍃</div>
+      </div>
       <div id="swampTip" class="tip">0 chi qatorni bosing!</div>
       <div class="hint">1 dan 5 gacha</div>
     </div>
     <div class="bottom">
-      <button class="btn" onclick="spinNum('swampNum','swampTip',5)">NEXT</button>
+      <button class="btn" onclick="spinNum('swampNum','swampTip',5,'swampTrack')">SCAN</button>
     </div>
   </div>
 </div>
 
 <!-- THIMBLES -->
 <div id="thimblesScreen" class="game-wrap">
-  <div class="game">
+  <div class="game thimbles-game">
     <div class="top-actions">
       <button class="mini-btn" onclick="goBack()">Orqaga</button>
       <button class="mini-btn" onclick="resetThimbles()">Restart</button>
     </div>
     <div class="game-title">THIMBLES</div>
+    <div class="game-badge">🎩</div>
     <div class="num-zone">
+      <div class="scan-label">CUP SCANNER</div>
       <div class="cups">
         <div id="cup1" class="cup">1</div>
         <div id="cup2" class="cup">2</div>
@@ -517,7 +593,7 @@
       <div class="hint">1 dan 3 gacha</div>
     </div>
     <div class="bottom">
-      <button class="btn" onclick="spinThimbles()">NEXT</button>
+      <button class="btn" onclick="spinThimbles()">SCAN</button>
     </div>
   </div>
 </div>
@@ -583,40 +659,50 @@
     menuScreen.classList.remove("hidden");
   }
 
-  function spinNum(numId, tipId, max){
+  function markTrack(trackId,val){
+    if(!trackId) return;
+    const cells = document.querySelectorAll("#"+trackId+" .track-cell");
+    cells.forEach((cell,index)=>cell.classList.toggle("selected",index===val-1));
+  }
+
+  function spinNum(numId, tipId, max, trackId){
     let i = 0;
     const el = document.getElementById(numId);
     const tip = document.getElementById(tipId);
+    tip.innerText = "Analiz qilinmoqda...";
 
     const inter = setInterval(()=>{
       const val = Math.floor(Math.random()*max)+1;
       el.innerText = val;
-      tip.innerText = val + " chi qatorni bosing!";
+      markTrack(trackId,val);
       i++;
       if(i > 10){
         clearInterval(inter);
+        tip.innerText = val + " chi qatorni bosing!";
       }
     },90);
   }
 
-  function resetNum(numId, tipId){
+  function resetNum(numId, tipId, trackId){
     document.getElementById(numId).innerText = 0;
     document.getElementById(tipId).innerText = "0 chi qatorni bosing!";
+    if(trackId) document.querySelectorAll("#"+trackId+" .track-cell").forEach(cell=>cell.classList.remove("selected"));
   }
 
   function spinThimbles(){
     let i = 0;
     const tip = document.getElementById("thimblesTip");
     const cups = [document.getElementById("cup1"), document.getElementById("cup2"), document.getElementById("cup3")];
+    tip.innerText = "Analiz qilinmoqda...";
 
     const inter = setInterval(()=>{
       const val = Math.floor(Math.random()*3)+1;
       cups.forEach(c=>c.classList.remove("active"));
       document.getElementById("cup"+val).classList.add("active");
-      tip.innerText = val + " chi variantni bosing!";
       i++;
       if(i > 10){
         clearInterval(inter);
+        tip.innerText = val + " chi variantni bosing!";
       }
     },90);
   }

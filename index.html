@@ -3,158 +3,643 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apple Full Casino</title>
+<title>SUNETUZ — Game Analyzer</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#000;
-  color:white;
-  text-align:center;
-}
+  :root{
+    --blue1:#33d6ff;
+    --blue2:#625bff;
+    --panel:#07111f;
+    --line:rgba(72,153,255,.28);
+    --text:#f4f8ff;
+    --muted:#b7c7de;
+    --green:#42ffb0;
+    --red:#ff4b5c;
+  }
 
-h2{
-  color:#ffd700;
-  text-shadow:0 0 15px #ffd700;
-}
+  *{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+  }
 
-.top{
-  display:flex;
-  justify-content:space-around;
-  margin:10px;
-}
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,sans-serif;
+    background:#02040b;
+    color:var(--text);
+  }
 
-.box{
-  background:#111;
-  padding:10px;
-  border-radius:10px;
-}
+  canvas{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+  }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:10px;
-  padding:20px;
-}
+  .settings{
+    position:fixed;
+    top:16px;
+    left:16px;
+    font-size:28px;
+    cursor:pointer;
+    z-index:30;
+    width:48px;
+    height:48px;
+    display:grid;
+    place-items:center;
+    border-radius:16px;
+    background:rgba(8,20,38,.72);
+    border:1px solid rgba(85,176,255,.3);
+    box-shadow:0 12px 35px rgba(0,0,0,.35);
+    backdrop-filter:blur(12px);
+    overflow:hidden;
+  }
 
-.cell{
-  height:70px;
-  border:none;
-  border-radius:20px;
-  font-size:28px;
-  background:#111;
-  color:white;
-  box-shadow:0 0 10px #444;
-}
+  .settings-icon{
+    width:46px;
+    height:46px;
+    display:block;
+    border-radius:50%;
+    object-fit:cover;
+  }
 
-.win{background:#00ff99;}
-.lose{background:#ff0033;}
+  #status{
+    position:fixed;
+    top:8px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:30;
+    width:72px;
+    height:72px;
+  }
 
-button{
-  margin:5px;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-}
+  .support{
+    display:block;
+    margin-top:12px;
+    color:#47b8ff;
+    text-decoration:none;
+    font-size:15px;
+  }
 
-.bet{
-  background:#ffd700;
-  color:black;
-}
+  .screen{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:86px 18px 24px;
+  }
+
+  .panel{
+    width:100%;
+    max-width:380px;
+    background:linear-gradient(145deg,rgba(13,30,54,.9),rgba(5,12,25,.84));
+    border:1px solid var(--line);
+    border-radius:28px;
+    box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 44px rgba(24,119,255,.15),inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    padding:22px 18px;
+    text-align:center;
+  }
+
+  .title{
+    margin:0 0 8px;
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:-1px;
+    background:linear-gradient(90deg,#fff,#8ddfff);
+    -webkit-background-clip:text;
+    color:transparent;
+  }
+
+  .sub{
+    margin:0 0 14px;
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  input{
+    width:100%;
+    padding:14px 12px;
+    border:none;
+    outline:none;
+    border-radius:16px;
+    text-align:center;
+    font-size:16px;
+    background:rgba(4,13,27,.8);
+    border:1px solid rgba(75,155,255,.18);
+    color:white;
+    margin-top:8px;
+    transition:border-color .2s,box-shadow .2s;
+  }
+
+  input:focus{border-color:rgba(51,214,255,.75);box-shadow:0 0 0 4px rgba(51,214,255,.08)}
+
+  .btn{
+    width:100%;
+    border:none;
+    border-radius:22px;
+    padding:16px 18px;
+    background:linear-gradient(90deg,var(--blue1),var(--blue2));
+    color:white;
+    font-size:18px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 14px 34px rgba(45,108,255,.34),inset 0 1px 0 rgba(255,255,255,.24);
+    transition:transform .18s ease,filter .18s ease;
+  }
+
+  .btn:hover{filter:brightness(1.1);transform:translateY(-2px)}
+  .btn:active{transform:translateY(1px) scale(.99)}
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:16px;
+  }
+
+  .card{
+    position:relative;
+    overflow:hidden;
+    background:rgba(10,24,44,.78);
+    border:1px solid var(--line);
+    border-radius:20px;
+    min-height:0;
+    aspect-ratio:1.28 / 1;
+    display:flex;
+    justify-content:flex-start;
+    align-items:stretch;
+    text-align:center;
+    font-weight:800;
+    font-size:18px;
+    cursor:pointer;
+    box-shadow:0 0 14px rgba(24,119,255,.08);
+    transition:transform .2s ease,border-color .2s ease,background .2s ease;
+  }
+
+  .card:hover{transform:translateY(-3px);border-color:rgba(66,255,176,.6);background:rgba(14,34,57,.94)}
+
+  .card img{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:calc(100% - 42px);
+    flex:none;
+    min-height:0;
+    object-fit:cover;
+    padding:0;
+    background:none;
+    transition:transform .35s ease,filter .35s ease;
+  }
+
+  .card img[alt="Apple"]{object-position:50% 48%}
+  .card img[alt="Thimbles"]{object-position:50% 56%}
+  .card img[alt="Kamikaze"]{object-position:48% 50%}
+  .card img[alt="Swamp"]{object-position:50% 48%}
+
+  .card:hover img{transform:scale(1.025);filter:saturate(1.1)}
+
+  .card .card-label{
+    position:absolute;
+    left:0;
+    bottom:0;
+    z-index:2;
+    width:100%;
+    height:42px;
+    min-height:42px;
+    flex:none;
+    padding:0 11px;
+    text-align:left;
+    display:flex;
+    align-items:center;
+    background:#f7f9fc;
+    color:#101923;
+    text-shadow:none;
+    font-size:15px;
+  }
+
+  .telegram{
+    position:fixed;
+    top:16px;
+    right:16px;
+    z-index:30;
+    width:48px;
+    height:48px;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    cursor:pointer;
+    border-radius:16px;
+    background:rgba(8,20,38,.72);
+    border:1px solid rgba(85,176,255,.3);
+    box-shadow:0 12px 35px rgba(0,0,0,.35);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+
+  .telegram-icon{
+    width:46px;
+    height:46px;
+    display:block;
+    border-radius:50%;
+    object-fit:cover;
+  }
+
+  .game-wrap{
+    width:100%;
+    min-height:100vh;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    padding:86px 18px 24px;
+  }
+
+  .game{
+    position:relative;
+    width:100%;
+    max-width:380px;
+    min-height:620px;
+    background:linear-gradient(160deg,rgba(12,29,52,.92),rgba(4,11,24,.86));
+    border:1px solid var(--line);
+    border-radius:30px;
+    box-shadow:0 30px 80px rgba(0,0,0,.48),0 0 45px rgba(24,119,255,.14),inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    padding:20px 18px 24px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .top-actions{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+
+  .mini-btn{
+    width:92px;
+    padding:12px 12px;
+    border:none;
+    border-radius:20px;
+    background:linear-gradient(90deg,var(--blue1),var(--blue2));
+    color:white;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 10px 22px rgba(24,119,255,.26);
+  }
+
+  .game-title{
+    margin-top:8px;
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:.4px;
+    text-align:center;
+  }
+
+  .num-zone{
+    flex:1;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    gap:16px;
+    padding-top:10px;
+    padding-bottom:10px;
+  }
+
+  .num{
+    font-size:128px;
+    line-height:1;
+    font-weight:900;
+    color:#ffffff;
+    text-shadow:0 0 18px rgba(51,214,255,.38),0 0 55px rgba(98,91,255,.3);
+    min-height:128px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .tip{
+    min-height:28px;
+    font-size:22px;
+    font-weight:800;
+    color:#dfe9f7;
+  }
+
+  .hint{
+    color:var(--muted);
+    font-size:14px;
+    margin-top:-4px;
+  }
+
+  .bottom{
+    width:100%;
+    margin-top:auto;
+  }
+
+  .cups{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    margin-top:10px;
+    margin-bottom:14px;
+  }
+
+  .cup{
+    width:78px;
+    height:78px;
+    border-radius:50%;
+    background:linear-gradient(145deg,#fff0a7,#e2a91e);
+    color:#2d1d00;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    font-weight:900;
+    box-shadow:0 14px 26px rgba(0,0,0,.25),0 0 22px rgba(255,216,107,.28),inset 0 2px 0 rgba(255,255,255,.55);
+    border:2px solid rgba(255,255,255,.22);
+    transition:all .18s ease;
+  }
+
+  .active{
+    outline:4px solid var(--green);
+    transform:translateY(-6px) scale(1.04);
+    box-shadow:0 0 24px rgba(66,255,123,.42);
+  }
+
+  .hidden{
+    display:none !important;
+  }
+
+  @media(max-width:480px){
+    .screen,.game-wrap{padding-left:14px;padding-right:14px}
+    .panel{border-radius:24px;padding:20px 15px}
+    .game{min-height:590px;border-radius:26px}
+    .num{font-size:112px}
+    .settings{top:12px;left:12px;width:44px;height:44px;font-size:24px}
+    .settings-icon{width:42px;height:42px}
+    .telegram{top:12px;right:12px;width:44px;height:44px}
+    .telegram-icon{width:42px;height:42px}
+  }
 </style>
 </head>
-
 <body>
 
-<h2>🎰 FULL CASINO</h2>
+<canvas id="stars"></canvas>
 
-<div class="top">
-  <div class="box">💰 <span id="bal">1000</span></div>
-  <div class="box">🎯 Bet: <span id="bet">100</span></div>
+<div class="settings" onclick="setID()" aria-label="Sozlamalarni ochish">
+  <img class="settings-icon" src="assets/settings-flat-v2.webp" alt="Sozlamalar">
+</div>
+<div class="telegram" onclick="window.open('https://t.me/+B7nEGQy2FGxhODgy','_blank')" aria-label="Telegram kanalini ochish">
+  <img class="telegram-icon" src="assets/telegram-flat.jpeg" alt="Telegram">
+</div>
+<div id="status"></div>
+
+<!-- MENU -->
+<div id="menuScreen" class="screen">
+  <div class="panel">
+    <div class="title">SUNETUZ</div>
+    <div class="grid">
+      <div class="card" onclick="openGame('apple')"><img src="assets/apple.webp" alt="Apple"><div class="card-label">Apple</div></div>
+      <div class="card" onclick="openGame('thimbles')"><img src="assets/thimbles.webp" alt="Thimbles"><div class="card-label">Thimbles</div></div>
+      <div class="card" onclick="openGame('kamikaze')"><img src="assets/kamikaze.webp" alt="Kamikaze"><div class="card-label">Kamikaze</div></div>
+      <div class="card" onclick="openGame('swamp')"><img src="assets/swamp.webp" alt="Swamp Land"><div class="card-label">Swamp Land</div></div>
+    </div>
+  </div>
 </div>
 
-<div>
-  <button class="bet" onclick="setBet(50)">50</button>
-  <button class="bet" onclick="setBet(100)">100</button>
-  <button class="bet" onclick="setBet(200)">200</button>
+<!-- APPLE -->
+<div id="appleScreen" class="game-wrap">
+  <div class="game">
+    <div class="top-actions">
+      <button class="mini-btn" onclick="goBack()">Orqaga</button>
+      <button class="mini-btn" onclick="resetNum('appleNum','appleTip')">Restart</button>
+    </div>
+    <div class="game-title">APPLE</div>
+    <div class="num-zone">
+      <div id="appleNum" class="num">0</div>
+      <div id="appleTip" class="tip">0 chi qatorni bosing!</div>
+      <div class="hint">1 dan 5 gacha</div>
+    </div>
+    <div class="bottom">
+      <button class="btn" onclick="spinNum('appleNum','appleTip',5)">NEXT</button>
+    </div>
+  </div>
 </div>
 
-<div id="status">Tanla</div>
+<!-- KAMIKAZE -->
+<div id="kamikazeScreen" class="game-wrap">
+  <div class="game">
+    <div class="top-actions">
+      <button class="mini-btn" onclick="goBack()">Orqaga</button>
+      <button class="mini-btn" onclick="resetNum('kamikazeNum','kamikazeTip')">Restart</button>
+    </div>
+    <div class="game-title">KAMIKAZE</div>
+    <div class="num-zone">
+      <div id="kamikazeNum" class="num">0</div>
+      <div id="kamikazeTip" class="tip">0 chi qatorni bosing!</div>
+      <div class="hint">1 dan 5 gacha</div>
+    </div>
+    <div class="bottom">
+      <button class="btn" onclick="spinNum('kamikazeNum','kamikazeTip',5)">NEXT</button>
+    </div>
+  </div>
+</div>
 
-<div class="grid" id="game"></div>
+<!-- SWAMP -->
+<div id="swampScreen" class="game-wrap">
+  <div class="game">
+    <div class="top-actions">
+      <button class="mini-btn" onclick="goBack()">Orqaga</button>
+      <button class="mini-btn" onclick="resetNum('swampNum','swampTip')">Restart</button>
+    </div>
+    <div class="game-title">SWAMP</div>
+    <div class="num-zone">
+      <div id="swampNum" class="num">0</div>
+      <div id="swampTip" class="tip">0 chi qatorni bosing!</div>
+      <div class="hint">1 dan 5 gacha</div>
+    </div>
+    <div class="bottom">
+      <button class="btn" onclick="spinNum('swampNum','swampTip',5)">NEXT</button>
+    </div>
+  </div>
+</div>
 
+<!-- THIMBLES -->
+<div id="thimblesScreen" class="game-wrap">
+  <div class="game">
+    <div class="top-actions">
+      <button class="mini-btn" onclick="goBack()">Orqaga</button>
+      <button class="mini-btn" onclick="resetThimbles()">Restart</button>
+    </div>
+    <div class="game-title">THIMBLES</div>
+    <div class="num-zone">
+      <div class="cups">
+        <div id="cup1" class="cup">1</div>
+        <div id="cup2" class="cup">2</div>
+        <div id="cup3" class="cup">3</div>
+      </div>
+      <div id="thimblesTip" class="tip">0 chi variantni bosing!</div>
+      <div class="hint">1 dan 3 gacha</div>
+    </div>
+    <div class="bottom">
+      <button class="btn" onclick="spinThimbles()">NEXT</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
 <script>
-let bad, balance=1000, bet=100, lock=false;
+  const menuScreen = document.getElementById("menuScreen");
+  const appleScreen = document.getElementById("appleScreen");
+  const thimblesScreen = document.getElementById("thimblesScreen");
+  const kamikazeScreen = document.getElementById("kamikazeScreen");
+  const swampScreen = document.getElementById("swampScreen");
 
-function setBet(x){
-  bet=x;
-  document.getElementById("bet").innerText=bet;
-}
+  const statusEl = document.getElementById("status");
+  let active = false;
+  let statusAnimation = null;
+  let lastStatusState = null;
 
-function sound(f){
-  let c=new AudioContext();
-  let o=c.createOscillator();
-  o.frequency.value=f;
-  o.connect(c.destination);
-  o.start();
-  setTimeout(()=>o.stop(),150);
-}
-
-function vib(){ if(navigator.vibrate) navigator.vibrate(100); }
-
-function start(){
-  bad=Math.floor(Math.random()*5);
-  lock=false;
-  let g=document.getElementById("game");
-  g.innerHTML="";
-
-  for(let i=0;i<5;i++){
-    let b=document.createElement("button");
-    b.className="cell";
-    b.innerText="❓";
-
-    b.onclick=()=>{
-      if(lock)return;
-      lock=true;
-
-      document.querySelectorAll(".cell").forEach((x,i2)=>{
-        if(i2==bad){
-          x.innerText="💣";
-          x.classList.add("lose");
-        }else{
-          x.innerText="🍎";
-          x.classList.add("win");
-        }
-      });
-
-      if(i==bad){
-        balance-=bet;
-        document.getElementById("status").innerText="❌ Lose";
-        sound(200);
-      }else{
-        balance+=bet*2;
-        document.getElementById("status").innerText="✅ Win x2!";
-        sound(800);
-      }
-
-      vib();
-
-      if(balance<=0){
-        alert("Pul tugadi!");
-        balance=1000;
-      }
-
-      document.getElementById("bal").innerText=balance;
-
-      setTimeout(start,1500);
-    };
-
-    g.appendChild(b);
+  if(window.lottie){
+    statusAnimation = lottie.loadAnimation({
+      container: statusEl,
+      renderer: "svg",
+      loop: false,
+      autoplay: false,
+      path: "assets/go-online.json?v=092237"
+    });
+    statusAnimation.addEventListener("DOMLoaded",()=>statusAnimation.goToAndStop(0,true));
   }
-}
 
-start();
+  function setID(){
+    const id = prompt("Betwinner ID yozing");
+    if(!id) return;
+
+    active = /^\d{10}$/.test(id);
+    updateStatus();
+  }
+
+  function updateStatus(){
+    if(!statusAnimation || lastStatusState === active) return;
+    if(active) statusAnimation.playSegments([0,54],true);
+    else statusAnimation.goToAndStop(0,true);
+    lastStatusState = active;
+  }
+  setInterval(updateStatus,1000);
+
+  function hideAll(){
+    menuScreen.classList.add("hidden");
+    appleScreen.style.display = "none";
+    thimblesScreen.style.display = "none";
+    kamikazeScreen.style.display = "none";
+    swampScreen.style.display = "none";
+  }
+
+  function openGame(name){
+    hideAll();
+    if(name === "apple") appleScreen.style.display = "flex";
+    if(name === "thimbles") thimblesScreen.style.display = "flex";
+    if(name === "kamikaze") kamikazeScreen.style.display = "flex";
+    if(name === "swamp") swampScreen.style.display = "flex";
+  }
+
+  function goBack(){
+    hideAll();
+    menuScreen.classList.remove("hidden");
+  }
+
+  function spinNum(numId, tipId, max){
+    let i = 0;
+    const el = document.getElementById(numId);
+    const tip = document.getElementById(tipId);
+
+    const inter = setInterval(()=>{
+      const val = Math.floor(Math.random()*max)+1;
+      el.innerText = val;
+      tip.innerText = val + " chi qatorni bosing!";
+      i++;
+      if(i > 10){
+        clearInterval(inter);
+      }
+    },90);
+  }
+
+  function resetNum(numId, tipId){
+    document.getElementById(numId).innerText = 0;
+    document.getElementById(tipId).innerText = "0 chi qatorni bosing!";
+  }
+
+  function spinThimbles(){
+    let i = 0;
+    const tip = document.getElementById("thimblesTip");
+    const cups = [document.getElementById("cup1"), document.getElementById("cup2"), document.getElementById("cup3")];
+
+    const inter = setInterval(()=>{
+      const val = Math.floor(Math.random()*3)+1;
+      cups.forEach(c=>c.classList.remove("active"));
+      document.getElementById("cup"+val).classList.add("active");
+      tip.innerText = val + " chi variantni bosing!";
+      i++;
+      if(i > 10){
+        clearInterval(inter);
+      }
+    },90);
+  }
+
+  function resetThimbles(){
+    [cup1,cup2,cup3].forEach(c=>c.classList.remove("active"));
+    document.getElementById("thimblesTip").innerText = "0 chi variantni bosing!";
+  }
+
+  /* stars */
+  const c = document.getElementById("stars");
+  const ctx = c.getContext("2d");
+
+  function resize(){
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  const stars = Array(120).fill(0).map(()=>({
+    x: Math.random()*c.width,
+    y: Math.random()*c.height
+  }));
+
+  function draw(){
+    const bg = ctx.createRadialGradient(c.width*.72,0,0,c.width*.72,0,Math.max(c.width,c.height));
+    bg.addColorStop(0,"#0b1f3e");
+    bg.addColorStop(.45,"#050b19");
+    bg.addColorStop(1,"#010207");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,c.width,c.height);
+
+    ctx.fillStyle = "white";
+    stars.forEach(s=>{
+      ctx.fillRect(s.x,s.y,2,2);
+      s.y += 0.45;
+      if(s.y > c.height){
+        s.y = 0;
+        s.x = Math.random()*c.width;
+      }
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
 </script>
 
 </body>

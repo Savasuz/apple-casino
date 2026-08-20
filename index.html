@@ -644,9 +644,10 @@
   const promoMessage = document.getElementById("promoMessage");
 
   function openPromo(){
-    promoInput.value = "";
-    promoMessage.textContent = "";
-    promoMessage.classList.remove("ok");
+    const savedPromo = localStorage.getItem("savasPromoCode") || "";
+    promoInput.value = savedPromo;
+    promoMessage.textContent = savedPromo === "SAVAS" ? "Promokod saqlangan" : "";
+    promoMessage.classList.toggle("ok",savedPromo === "SAVAS");
     promoModal.classList.remove("hidden");
     setTimeout(()=>promoInput.focus(),80);
   }
@@ -662,7 +663,9 @@
       return;
     }
     localStorage.setItem("savasPromoVerified","1");
-    promoMessage.textContent = "Promokod tasdiqlandi";
+    localStorage.setItem("savasPromoCode","SAVAS");
+    promoInput.value = "SAVAS";
+    promoMessage.textContent = "Promokod saqlandi";
     promoMessage.classList.add("ok");
     setTimeout(()=>closePromo(),550);
   }

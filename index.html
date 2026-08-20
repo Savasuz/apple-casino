@@ -667,7 +667,6 @@
     promoInput.value = "SAVAS";
     promoMessage.textContent = "Promokod saqlandi";
     promoMessage.classList.add("ok");
-    setTimeout(()=>closePromo(),550);
   }
   promoInput.addEventListener("input",()=>{
     promoInput.value = promoInput.value.replace(/[^a-z]/gi,"").toUpperCase().slice(0,5);
